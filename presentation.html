@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RusDars — taqdimot</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --accent: #6c5ce7;
+    --accent-strong: #5949d6;
+    --accent-soft: #f1eeff;
+    --bg: #f7f7fb;
+    --surface: #ffffff;
+    --border: #e8e7f2;
+    --text: #1c1b2d;
+    --muted: #6b6980;
+    --success: #12b76a;
+    --danger: #e5484d;
+    --gradient: linear-gradient(135deg, #6c5ce7 0%, #5a67d8 100%);
+    --radius: 18px;
+    --shadow: 0 12px 40px rgba(28, 27, 45, 0.10);
+  }
+
+  html, body { height: 100%; }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+  }
+
+  .deck { height: 100vh; width: 100vw; position: relative; }
+
+  .slide {
+    position: absolute; inset: 0;
+    display: none;
+    padding: 6vh 6vw;
+    overflow-y: auto;
+    background:
+      radial-gradient(900px 500px at 85% -10%, rgba(108, 92, 231, 0.14), transparent 60%),
+      radial-gradient(700px 600px at -10% 110%, rgba(90, 103, 216, 0.10), transparent 60%),
+      var(--bg);
+  }
+  .slide.active { display: flex; flex-direction: column; }
+  .slide.active .anim { animation: rise .55s cubic-bezier(.2,.7,.2,1) both; }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(26px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Титул и финал (cover) ── */
+  .cover {
+    max-width: 860px; margin: auto; text-align: center;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 28px; padding: 52px 44px; box-shadow: var(--shadow);
+  }
+  .cover-row { display: flex; align-items: center; justify-content: center; gap: 18px; }
+  .cover-logo {
+    font-size: 52px; line-height: 1;
+    width: 84px; height: 84px; border-radius: 22px;
+    background: var(--gradient);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 26px rgba(108, 92, 231, 0.35);
+  }
+  .cover-row h1 { font-size: clamp(38px, 5.5vw, 62px); font-weight: 800; letter-spacing: -0.02em; text-align: left; }
+  .cover-sub { color: var(--muted); font-size: 15px; text-align: left; }
+  .cover-desc {
+    margin: 24px auto 0; font-size: clamp(16px, 2vw, 20px);
+    color: var(--text); max-width: 640px; line-height: 1.5; font-weight: 500;
+  }
+  .chips { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; justify-content: center; }
+  .chip {
+    background: var(--accent-soft); color: var(--accent-strong);
+    font-weight: 600; font-size: 14px; padding: 9px 16px; border-radius: 999px;
+  }
+  .cover-note { margin-top: 30px; color: var(--muted); font-size: 13.5px; }
+
+  .link-chip-wrap { margin-top: 28px; }
+  .link-chip {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--gradient); color: #fff; text-decoration: none;
+    padding: 14px 28px; border-radius: 14px; font-size: 18px; font-weight: 700;
+    box-shadow: 0 10px 26px rgba(108, 92, 231, 0.35);
+  }
+  .link-chip:hover { transform: scale(1.04); }
+  .git-ico { font-size: 22px; }
+
+  .kicker { color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: .14em; font-size: 13px; margin-bottom: 12px; }
+  .head h2 { font-size: clamp(28px, 4vw, 48px); letter-spacing: -0.02em; font-weight: 800; margin-bottom: 8px; }
+  .head p { color: var(--muted); font-size: clamp(15px, 1.6vw, 17px); max-width: 900px; }
+
+  .grid { display: grid; gap: 16px; margin-top: 6vh; }
+  .grid.cards { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .grid.two { grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px 22px;
+    box-shadow: var(--shadow);
+  }
+  .card .ico { font-size: 34px; margin-bottom: 12px; display: block; }
+  .card h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .card h3 small { font-weight: 500; color: var(--muted); font-size: 13px; display: block; margin-top: 2px; }
+  .card p { color: var(--muted); font-size: 14.5px; line-height: 1.55; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; margin-top: 6vh; }
+  .stat {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px 14px; text-align: center; box-shadow: var(--shadow);
+  }
+  .stat b { font-size: clamp(28px, 3.5vw, 42px); color: var(--accent); font-weight: 800; display: block; }
+  .stat .emo { font-size: 24px; display: block; margin-bottom: 6px; }
+  .stat span { color: var(--muted); font-size: 13.5px; }
+
+  .list { margin-top: 5vh; display: grid; gap: 14px; }
+  .item {
+    display: flex; gap: 15px; align-items: flex-start;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 16px 20px; box-shadow: var(--shadow);
+  }
+  .item .num {
+    flex: 0 0 38px; height: 38px; border-radius: 10px;
+    background: var(--gradient); color: #fff; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; font-size: 17px;
+  }
+  .item h3 { font-size: 17px; margin-bottom: 3px; }
+  .item p { color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+  nav {
+    position: fixed; left: 0; right: 0; bottom: 18px; z-index: 50;
+    display: flex; align-items: center; justify-content: center; gap: 18px;
+  }
+  .dots { display: flex; gap: 8px; }
+  .dots button {
+    width: 10px; height: 10px; border-radius: 999px; border: none; cursor: pointer;
+    background: #d4d2e6; transition: all .25s; padding: 0;
+  }
+  .dots button.on { background: var(--accent); width: 26px; }
+  .arr {
+    width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text); font-size: 20px; cursor: pointer;
+    box-shadow: var(--shadow); transition: transform .15s, background .15s;
+    line-height: 1; display: flex; align-items: center; justify-content: center;
+  }
+  .arr:hover { background: var(--accent-soft); transform: scale(1.06); }
+  .arr:disabled { opacity: .35; cursor: default; transform: none; }
+  .counter {
+    position: fixed; top: 18px; right: 22px; z-index: 60;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 999px; padding: 7px 16px; font-size: 13px; font-weight: 700;
+    color: var(--muted); box-shadow: var(--shadow);
+  }
+  .progress {
+    position: fixed; top: 0; left: 0; height: 4px; z-index: 70;
+    background: var(--gradient); transition: width .3s ease;
+  }
+
+  @media (max-width: 720px) {
+    .slide { padding: 6vh 5vw; }
+    .counter { top: 10px; right: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- 1. Титул -->
+  <section class="slide">
+    <div class="cover anim">
+      <div class="cover-row">
+        <span class="cover-logo">🇷🇺</span>
+        <div>
+          <h1>RusDars</h1>
+          <p class="cover-sub">Rus tili — hamma uchun ochiq</p>
+        </div>
+      </div>
+      <p class="cover-desc">O'zbek tilida so'zlashuvchilar uchun rus tilini o'rganish platformasi.</p>
+      <div class="chips">
+        <span class="chip">📚 Rus tili kursi</span>
+        <span class="chip">🇺🇿 O'zbek tili orqali o'rganish</span>
+        <span class="chip">📴 Internetdan tashqari ishlaydi</span>
+        <span class="chip">🆓 Bepul</span>
+        <span class="chip">⚛️ React + Vite</span>
+      </div>
+      <p class="cover-note">Loyihaning imkoniyatlari va afzalliklari taqdimoti</p>
+    </div>
+  </section>
+
+  <!-- 2. Функции -->
+  <section class="slide">
+    <div class="head anim">
+      <div class="kicker">Imkoniyatlar</div>
+      <h2>Bitta platforma — to'liq o'rganish yo'li</h2>
+      <p>Birinchi so'zlardan klassik asarlar va talaffuzni tekshirishgacha.</p>
+    </div>
+    <div class="stats">
+      <div class="stat anim"><span class="emo">🗂️</span><b>1871</b><span>so'z · 35 mavzu</span></div>
+      <div class="stat anim"><span class="emo">💬</span><b>102</b><span>dialog</span></div>
+      <div class="stat anim"><span class="emo">📐</span><b>16</b><span>grammatika mavzusi</span></div>
+      <div class="stat anim"><span class="emo">📖</span><b>30</b><span>klassik kitob</span></div>
+      <div class="stat anim"><span class="emo">🎮</span><b>4</b><span>mini-o'yin</span></div>
+      <div class="stat anim"><span class="emo">🏆</span><b>5</b><span>liga va reyting</span></div>
+    </div>
+    <div class="grid cards" style="margin-top:3.5vh">
+      <div class="card anim"><span class="ico">🗂️</span><h3>Lug'at va tarjimon</h3><p>Rus-o'zbek tarjimasi va 35 mavzuli kategoriya — hatto internetdan tashqari ham.</p></div>
+      <div class="card anim"><span class="ico">📝</span><h3>Darslar va mashqlar</h3><p>Qoidalar, misollar va testlar bilan grammatika. Xatolar takrorlash uchun saqlanadi.</p></div>
+      <div class="card anim"><span class="ico">🎙️</span><h3>Talaffuz</h3><p>Har bir so'zni ovozlandirish va nutqni mikrofon orqali tekshirish.</p></div>
+      <div class="card anim"><span class="ico">🧠</span><h3>Aqlli takrorlash</h3><p>SRS-kartalar va «Takrorlash» bo'limi — so'zlarni kerakli vaqtda o'rganamiz.</p></div>
+    </div>
+  </section>
+
+  <!-- 3. Плюсы -->
+  <section class="slide">
+    <div class="head anim">
+      <div class="kicker">Afzalliklar</div>
+      <h2>RusDars nimasi bilan yaxshiroq</h2>
+      <p>Platformani oddiy ilovalardan ajratib turadigan asosiy jihatlar.</p>
+    </div>
+    <div class="list">
+      <div class="item anim"><div class="num">1</div>
+        <div><h3>Rus tili ona o'zbek tili orqali</h3><p>Tushuntirishlar, tarjimalar va lug'at — o'quvchi tilida, «ingliz tili orqali» emas.</p></div>
+      </div>
+      <div class="item anim"><div class="num">2</div>
+        <div><h3>Internetdan tashqari ishlaydi</h3><p>Lug'at, tarjima va taraqqiyot brauzerda saqlanadi — istalgan joyda o'rganing.</p></div>
+      </div>
+      <div class="item anim"><div class="num">3</div>
+        <div><h3>Bepul va o'rnatish shart emas</h3><p>Havolani ochdingiz — tamom. Obunalar, reklama va yuklab olishlar yo'q.</p></div>
+      </div>
+      <div class="item anim"><div class="num">4</div>
+        <div><h3>Maxfiylik</h3><p>Profil va statistika qurilmangizda qoladi — serverlar va kuzatuvsiz.</p></div>
+      </div>
+      <div class="item anim"><div class="num">5</div>
+        <div><h3>O'yinga o'xshatilgan o'rganish</h3><p>XP, darajalar, kunlik serya, yurakchalar, 5 liga va reytingdagi bellashuv — o'rganish qiziqarli.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Сравнение -->
+  <section class="slide">
+    <div class="head anim">
+      <div class="kicker">Taqqoslash</div>
+      <h2>RusDars oddiy ilovalarga qarshi</h2>
+    </div>
+    <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-top:4vh;font-size:15px">
+      <thead>
+        <tr>
+          <th style="padding:15px 20px;text-align:left;background:var(--gradient);color:#fff">Mezon</th>
+          <th style="padding:15px 20px;text-align:left;background:var(--gradient);color:#fff">RusDars</th>
+          <th style="padding:15px 20px;text-align:left;background:var(--gradient);color:#fff">Oddiy ilovalar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:14px 20px;border-bottom:1px solid var(--border)">O'zbek tili orqali o'rganish</td><td style="padding:14px 20px;border-bottom:1px solid var(--border);background:var(--accent-soft);font-weight:700;color:var(--success)">✔ bor</td><td style="padding:14px 20px;border-bottom:1px solid var(--border);color:var(--danger);font-weight:700">✘ yo'q</td></tr>
+        <tr><td style="padding:14px 20px;border-bottom:1px solid var(--border)">Oflayn rejim</td><td style="padding:14px 20px;border-bottom:1px solid var(--border);background:var(--accent-soft);font-weight:700;color:var(--success)">✔ bor</td><td style="padding:14px 20px;border-bottom:1px solid var(--border);color:var(--danger);font-weight:700">✘ odatda kerak</td></tr>
+        <tr><td style="padding:14px 20px;border-bottom:1px solid var(--border)">Narxi</td><td style="padding:14px 20px;border-bottom:1px solid var(--border);background:var(--accent-soft);font-weight:700;color:var(--success)">Bepul</td><td style="padding:14px 20px;border-bottom:1px solid var(--border);color:var(--danger);font-weight:700">Obuna / reklama</td></tr>
+        <tr><td style="padding:14px 20px;border-bottom:1px solid var(--border)">Rus klassikasi</td><td style="padding:14px 20px;border-bottom:1px solid var(--border);background:var(--accent-soft);font-weight:700;color:var(--success)">✔ 30 kitob o'rnatilgan</td><td style="padding:14px 20px;border-bottom:1px solid var(--border);color:var(--danger);font-weight:700">✘ yo'q</td></tr>
+        <tr><td style="padding:14px 20px">Ma'lumotlar maxfiyligi</td><td style="padding:14px 20px;background:var(--accent-soft);font-weight:700;color:var(--success)">Qurilmada mahalliy</td><td style="padding:14px 20px;color:var(--danger);font-weight:700">Serverlarda</td></tr>
+      </tbody>
+    </table>
+    <div class="grid two" style="margin-top:4vh">
+      <div class="card anim"><span class="ico">⚛️</span><h3>Zamonaviy texnologiyalar</h3><p>React 19 + Vite, SRS-algoritm, Web Speech API — tez va ishonchli.</p></div>
+      <div class="card anim"><span class="ico">🚀</span><h3>Joylashtirish</h3><p>Vercel va GitHub Pages'da ishlaydi — bir zumda ishga tushadi, butun dunyoda CDN.</p></div>
+    </div>
+  </section>
+
+  <!-- 5. Итог + ссылка -->
+  <section class="slide">
+    <div class="cover anim">
+      <div class="cover-row">
+        <span class="cover-logo">🇷🇺</span>
+        <div>
+          <h1>E'tiboringiz uchun rahmat</h1>
+          <p class="cover-sub">RusDars — rus tilini o'rganish endi oson</p>
+        </div>
+      </div>
+      <p class="cover-desc">
+        Bepul, oflayn va ona tilida. Lug'at, grammatika, dialoglar, kitoblar,
+        o'yinlar va talaffuzni tekshirish — hammasi bir joyda.
+      </p>
+      <div class="chips">
+        <span class="chip">📖 O'rganing</span>
+        <span class="chip">🎮 Mashq qiling</span>
+        <span class="chip">📊 Taraqqiyotni kuzating</span>
+      </div>
+      <div class="link-chip-wrap">
+        <a class="link-chip" href="https://github.com/Anxietymode/RusDars" target="_blank" rel="noopener">
+          <span class="git-ico">🌐</span> github.com/Anxietymode/RusDars
+        </a>
+      </div>
+      <p class="cover-note">Savollar bormi? 👋</p>
+    </div>
+  </section>
+
+</div>
+
+<div class="counter" id="counter">1 / 5</div>
+<div class="progress" id="progress"></div>
+<nav>
+  <button class="arr" id="prev" aria-label="Назад">←</button>
+  <div class="dots" id="dots"></div>
+  <button class="arr" id="next" aria-label="Вперёд">→</button>
+</nav>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsBox = document.getElementById('dots');
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  let cur = 0;
+
+  slides.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.setAttribute('aria-label', 'Slayd ' + (i + 1));
+    b.addEventListener('click', () => go(i));
+    dotsBox.appendChild(b);
+  });
+  const dots = Array.from(dotsBox.children);
+
+  function go(i) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === cur));
+    dots.forEach((d, idx) => d.classList.toggle('on', idx === cur));
+    counter.textContent = (cur + 1) + ' / ' + slides.length;
+    progress.style.width = ((cur + 1) / slides.length * 100) + '%';
+    document.getElementById('prev').disabled = cur === 0;
+    document.getElementById('next').disabled = cur === slides.length - 1;
+    slides[cur].scrollTop = 0;
+  }
+
+  document.getElementById('prev').addEventListener('click', () => go(cur - 1));
+  document.getElementById('next').addEventListener('click', () => go(cur + 1));
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', ' ', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); go(cur + 1); }
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(cur - 1); }
+    if (e.key === 'Home') go(0);
+    if (e.key === 'End') go(slides.length - 1);
+  });
+
+  go(0);
+</script>
+</body>
+</html>
